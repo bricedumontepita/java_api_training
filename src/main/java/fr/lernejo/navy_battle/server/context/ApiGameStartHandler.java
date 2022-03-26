@@ -1,5 +1,6 @@
 package fr.lernejo.navy_battle.server.context;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -7,11 +8,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.lernejo.navy_battle.JsonHandler;
 
 public class ApiGameStartHandler implements HttpHandler {
+    final int port;
+    final JsonHandler jsonHandler;
+    final ObjectMapper mapper;
+
+    public ApiGameStartHandler (int port) {
+        this.port = port;
+        this.jsonHandler = new JsonHandler();
+        this.mapper = new ObjectMapper();
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String requestMethod = exchange.getRequestMethod();
@@ -24,18 +37,18 @@ public class ApiGameStartHandler implements HttpHandler {
 
     public void managePost(HttpExchange exchange) throws IOException {
         String query = this.getContent(exchange);
-        ObjectMapper mapper = new ObjectMapper();
-        if (!this.isJson(query, mapper)) {
+        Map<String, String> json = this.jsonHandler.isJson(query, this.mapper);
+        if (json == null) {
             exchange.sendResponseHeaders(400, "Bad Request".length());
             try (OutputStream os = exchange.getResponseBody()) { // (1)
                 os.write("Bad Request".getBytes());
             }
             return;
         }
-        Map<String, String> json = this.getJson(query, mapper);
-        for (Map.Entry<String, String> pair : json.entrySet()) {
-            System.out.println(String.format("Key (name) is: %s, Value (age) is : %s", pair.getKey(), pair.getValue()));
-        }
+        json.replace("id", Integer.toString(this.port));
+        json.replace("url", "http://localhost:" + this.port);
+        json.replace("message", "reponse");
+        query = this.jsonHandler.toJson(json, this.mapper);
         exchange.sendResponseHeaders(202, query.length());
         try (OutputStream os = exchange.getResponseBody()) { // (1)
             os.write(query.getBytes());
@@ -62,17 +75,5 @@ public class ApiGameStartHandler implements HttpHandler {
         return in.toString().trim();
     }
 
-    protected Map<String, String> getJson (String json, ObjectMapper mapper) throws IOException {
-        Map<String, String> scoreByName = mapper.readValue(json, Map.class);
-        return scoreByName;
-    }
 
-    protected boolean isJson (String jsonInString, ObjectMapper mapper) {
-        try {
-            mapper.readTree(jsonInString);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
 }
