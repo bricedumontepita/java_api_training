@@ -28,39 +28,29 @@ public class ApiGameStartHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String requestMethod = exchange.getRequestMethod();
-        if ("POST".equals(requestMethod)) {
+        if ("POST".equals(requestMethod))
             this.managePost(exchange);
-        } else {
+        else
             this.manageOther(exchange);
-        }
     }
 
     public void managePost(HttpExchange exchange) throws IOException {
+        System.out.println("Got");
         String query = this.getContent(exchange);
         Map<String, String> json = this.jsonHandler.isJson(query, this.mapper);
         if (json == null) {
-            exchange.sendResponseHeaders(400, "Bad Request".length());
-            try (OutputStream os = exchange.getResponseBody()) { // (1)
-                os.write("Bad Request".getBytes());
-            }
+            this.response(400, "Bad request", exchange);
             return;
         }
         json.replace("id", Integer.toString(this.port));
         json.replace("url", "http://localhost:" + this.port);
         json.replace("message", "reponse");
         query = this.jsonHandler.toJson(json, this.mapper);
-        exchange.sendResponseHeaders(202, query.length());
-        try (OutputStream os = exchange.getResponseBody()) { // (1)
-            os.write(query.getBytes());
-        }
+        this.response(202, query, exchange);
     }
 
     public void manageOther(HttpExchange exchange) throws IOException {
-        String body = "404 Page not found";
-        exchange.sendResponseHeaders(404, body.length());
-        try (OutputStream os = exchange.getResponseBody()) { // (1)
-            os.write(body.getBytes());
-        }
+        this.response(404, "Page doesn't found", exchange);
     }
 
     protected String getContent(HttpExchange exchange) throws IOException {
@@ -75,5 +65,11 @@ public class ApiGameStartHandler implements HttpHandler {
         return in.toString().trim();
     }
 
+    protected void response (int code, String body, HttpExchange exchange) throws IOException{
+        exchange.sendResponseHeaders(code, body.length());
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(body.getBytes());
+        }
+    }
 
 }

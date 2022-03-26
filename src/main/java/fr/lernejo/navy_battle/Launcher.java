@@ -7,19 +7,23 @@ import fr.lernejo.navy_battle.server.Server;
 
 public class Launcher {
     public static void main(String[] args) {
+        int port = 0;
+        String url = "";
         if (args.length <= 0) {
             System.out.println("Usage: ./prog port_number\n");
             return;
         }
-        int port = 0;
         try {
             port = Integer.parseInt(args[0]);
         } catch (NumberFormatException nfe) {
             System.out.println("Usage: ./prog port_number. Ex: ./prog 8000\n");
             return;
         }
+        if (args.length >= 2) {
+            url = args[1];
+        }
 
-        Server server = new Server();
-        server.run(port);
+        Server server = new Server(port, url);
+        server.run();
     }
 }
