@@ -15,21 +15,6 @@ public class JsonHandler {
         return mapper.readValue(json, Map.class);
     }
 
-    public Map<String, String> isJson (String jsonInString, ObjectMapper mapper) {
-        try {
-            Map<String, String> json = this.getJson(jsonInString, mapper);
-            List<String> keysRequired = List.of("url", "id", "message");
-            for (Map.Entry<String, String> pair : json.entrySet()) {
-                int index = keysRequired.indexOf(pair.getKey());
-                if (index != -1)
-                    keysRequired.remove(index);
-                else
-                    return null;
-            }
-            return keysRequired.size() == 0 ? json : null;
-        } catch (IOException e) { return null; }
-    }
-
     public Object parseJson (String jsonStr, Class classData, ObjectMapper mapper) throws IOException {
         try {
             Object requestData = mapper.readValue(jsonStr, classData);
@@ -59,13 +44,5 @@ public class JsonHandler {
             e.printStackTrace();
             return "";
         }
-    }
-
-    public String toJson (Map<String, String> val, ObjectMapper mapper) throws IOException {
-        ObjectNode user = mapper.createObjectNode();
-        for (Map.Entry<String, String> pair : val.entrySet()) {
-            user.put(pair.getKey(), pair.getValue());
-        }
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user);
     }
 }
