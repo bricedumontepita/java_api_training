@@ -32,11 +32,10 @@ public class JsonHandler {
         try {
             String jsonString = mapper.writeValueAsString(request);
 
-            System.out.println(jsonString);
 
             // Java objects to JSON string - pretty-print
             String jsonInString2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
-
+            System.out.println("send :");
             System.out.println(jsonInString2);
 
             return jsonString;

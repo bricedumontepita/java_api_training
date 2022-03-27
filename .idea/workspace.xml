@@ -7,7 +7,9 @@
     <list default="true" id="c93c5299-219e-4563-92a3-b1c9531ef489" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/JsonHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/JsonHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/server/context/ApiGameFireHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/server/context/ApiGameFireHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/server/context/ApiGameStartHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/lernejo/navy_battle/server/context/ApiGameStartHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -20,10 +20,12 @@ public class ApiGameFireHandler extends ApiHandler implements HttpHandler {
     final int port;
     final JsonHandler jsonHandler;
     final ObjectMapper mapper;
+    final Server server;
 
-    public ApiGameFireHandler (NavyBattle game, int port) {
+    public ApiGameFireHandler (NavyBattle game, int port, Server server) {
         this.game = game;
         this.port = port;
+        this.server = server;
         this.jsonHandler = new JsonHandler();
         this.mapper = new ObjectMapper();
     }
@@ -43,6 +45,7 @@ public class ApiGameFireHandler extends ApiHandler implements HttpHandler {
     }
 
     public void manageGet(HttpExchange exchange) throws IOException {
+        System.out.println("got");
         String query = exchange.getRequestURI().getQuery();
         ArrayList<String []> paramsValues = this.getParams(query);
         if (paramsValues == null || paramsValues.size() == 0) {
@@ -54,6 +57,7 @@ public class ApiGameFireHandler extends ApiHandler implements HttpHandler {
         response.setShipLeft( this.game.hasShipLeft());
         query = this.jsonHandler.toJson2(response, this.mapper);
         this.response(202, query, exchange);
+        this.server.sendGET(this.server.getUrl() + "/api/game/fire?cell=C7");
     }
 
     public ArrayList<String []> getParams (String query) {
