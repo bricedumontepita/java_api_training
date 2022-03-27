@@ -13,8 +13,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.lernejo.navy_battle.JsonHandler;
+import fr.lernejo.navy_battle.server.request.StartRequest;
 
-public class ApiGameStartHandler implements HttpHandler {
+public class ApiGameStartHandler extends ApiHandler implements HttpHandler {
     final int port;
     final JsonHandler jsonHandler;
     final ObjectMapper mapper;
@@ -36,40 +37,19 @@ public class ApiGameStartHandler implements HttpHandler {
 
     public void managePost(HttpExchange exchange) throws IOException {
         System.out.println("Got");
+
         String query = this.getContent(exchange);
-        Map<String, String> json = this.jsonHandler.isJson(query, this.mapper);
-        if (json == null) {
+        StartRequest requestData = (StartRequest) this.jsonHandler.parseJson(query, StartRequest.class, mapper);
+        //Map<String, String> json = this.jsonHandler.isJson(query, this.mapper);
+        if (requestData == null) {
             this.response(400, "Bad request", exchange);
             return;
         }
-        json.replace("id", Integer.toString(this.port));
-        json.replace("url", "http://localhost:" + this.port);
-        json.replace("message", "reponse");
-        query = this.jsonHandler.toJson(json, this.mapper);
+        StartRequest response = new StartRequest();
+        response.setId(Integer.toString(this.port));
+        response.setUrl( "http://localhost:" + this.port);
+        response.setMessage("reponse");
+        query = this.jsonHandler.toJson2(response, this.mapper);
         this.response(202, query, exchange);
     }
-
-    public void manageOther(HttpExchange exchange) throws IOException {
-        this.response(404, "Page doesn't found", exchange);
-    }
-
-    protected String getContent(HttpExchange exchange) throws IOException {
-        BufferedReader httpInput = new BufferedReader(new InputStreamReader(
-            exchange.getRequestBody(), "UTF-8"));
-        StringBuilder in = new StringBuilder();
-        String input;
-        while ((input = httpInput.readLine()) != null) {
-            in.append(input).append(" ");
-        }
-        httpInput.close();
-        return in.toString().trim();
-    }
-
-    protected void response (int code, String body, HttpExchange exchange) throws IOException{
-        exchange.sendResponseHeaders(code, body.length());
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(body.getBytes());
-        }
-    }
-
 }

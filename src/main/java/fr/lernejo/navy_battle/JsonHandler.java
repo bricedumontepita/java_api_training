@@ -39,6 +39,37 @@ public class JsonHandler {
         }
     }
 
+    public Object parseJson (String jsonStr, Class classData, ObjectMapper mapper) throws IOException {
+        try {
+            Object requestData = mapper.readValue(jsonStr, classData);
+            // pretty print
+            String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestData);
+            System.out.println(prettyStaff1);
+            return requestData;
+        } catch (IOException e) {
+            System.out.println("Erreur " + e);
+            return null;
+        }
+    }
+
+    public String toJson2 (Object request, ObjectMapper mapper) {
+        try {
+            String jsonString = mapper.writeValueAsString(request);
+
+            System.out.println(jsonString);
+
+            // Java objects to JSON string - pretty-print
+            String jsonInString2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
+
+            System.out.println(jsonInString2);
+
+            return jsonString;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     public String toJson (Map<String, String> val, ObjectMapper mapper) throws IOException {
         ObjectNode user = mapper.createObjectNode();
         for (Map.Entry<String, String> pair : val.entrySet()) {
