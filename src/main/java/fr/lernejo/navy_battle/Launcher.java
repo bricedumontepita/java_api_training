@@ -19,11 +19,7 @@ public class Launcher {
             System.out.println("Usage: ./prog port_number. Ex: ./prog 8000\n");
             return;
         }
-        if (args.length >= 2) {
-            url = args[1];
-        }
-
-        Server server = new Server(port, url);
+        Server server = new Server(port, args.length >= 2 ? args[1] : "");
         server.run();
     }
 }

@@ -9,7 +9,7 @@ import java.io.OutputStream;
 public class ApiPingHandler extends ApiHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        this.response(200, "Pong", exchange);
+        this.response(200, "OK", exchange);
     }
 }
 

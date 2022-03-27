@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import fr.lernejo.navy_battle.JsonHandler;
 import fr.lernejo.navy_battle.NavyBattle;
+import fr.lernejo.navy_battle.server.Server;
 import fr.lernejo.navy_battle.server.request.FireRequest;
 import fr.lernejo.navy_battle.server.request.StartRequest;
 
@@ -42,12 +43,22 @@ public class ApiGameFireHandler extends ApiHandler implements HttpHandler {
     }
 
     public void manageGet(HttpExchange exchange) throws IOException {
-        System.out.println("Got");
         String query = exchange.getRequestURI().getQuery();
-        if ("".equals(query) || query == null) {
+        ArrayList<String []> paramsValues = this.getParams(query);
+        if (paramsValues == null || paramsValues.size() == 0) {
             this.response(400, "Bad request", exchange);
             return;
         }
+        FireRequest response = new FireRequest();
+        response.setConsequence(this.game.getDamage());
+        response.setShipLeft( this.game.hasShipLeft());
+        query = this.jsonHandler.toJson2(response, this.mapper);
+        this.response(202, query, exchange);
+    }
+
+    public ArrayList<String []> getParams (String query) {
+        if ("".equals(query) || query == null)
+            return null;
         String [] params = query.split("&");
         ArrayList<String []> paramsValues = new ArrayList<>();
         for (int i = 0; i < params.length; i++) {
@@ -57,17 +68,6 @@ public class ApiGameFireHandler extends ApiHandler implements HttpHandler {
                 paramsValues.add(values);
             }
         }
-
-        System.out.println(paramsValues.size());
-        if (paramsValues.size() == 0) {
-            this.response(400, "Bad request", exchange);
-            return;
-        }
-
-        FireRequest response = new FireRequest();
-        response.setConsequence(this.game.getDamage());
-        response.setShipLeft( this.game.hasShipLeft());
-        query = this.jsonHandler.toJson2(response, this.mapper);
-        this.response(202, query, exchange);
+        return paramsValues;
     }
 }

@@ -14,6 +14,7 @@ public class ApiHandler {
     }
 
     protected void response (int code, String body, HttpExchange exchange) throws IOException{
+        exchange.getResponseHeaders().set("Content-type", "application/json");
         exchange.sendResponseHeaders(code, body.length());
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(body.getBytes());

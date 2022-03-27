@@ -25,39 +25,33 @@ public class Server {
 
     public void run () {
         try {
-            System.out.println("Run");
             HttpServer server = HttpServer.create(new InetSocketAddress(this.port), 0);
             server.setExecutor(Executors.newFixedThreadPool(1));
-
             NavyBattle game = new NavyBattle();
             server.createContext("/ping", new ApiPingHandler());
             server.createContext("/api/game/start", new ApiGameStartHandler(this.port));
             server.createContext("/api/game/fire", new ApiGameFireHandler(game, this.port));
             server.start();
-
-            if (!"".equals(this.url)) {
-                this.sendMessage();
-            }
-
+            if (!"".equals(this.url))
+                this.sendMessage("");
         } catch (IOException e) {
             System.out.println("Erreur creation serveur " + e);
         }
     }
 
-    public void sendMessage () {
-        System.out.println("Send");
+    public void sendMessage (String body) {
+        if ("".equals(body))
+            body = "{\"id\":\""+this.port+"\", \"url\":\"http://localhost:" + this.port + "\", \"message\":\"hello\"}";
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest requetePost = HttpRequest.newBuilder()
             .uri(URI.create(this.url + "/api/game/start"))
             .setHeader("Accept", "application/json")
             .setHeader("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString("{\"id\":\""+this.port+"\", \"url\":\"http://localhost:" + this.port + "\", \"message\":\"hello\"}"))
+            .POST(HttpRequest.BodyPublishers.ofString(body))
             .build();
-
         try {
             HttpResponse<String> response = client.send(requetePost,
                 HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
         } catch (Exception e) {
             System.out.println("erreur response");
         }
